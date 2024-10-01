@@ -21,12 +21,8 @@ const getPokemonList = (limit = 10, offset = 0) => {
   });
 };
 
-const getPokemonSpecies = (pokemonNameOrId: string | number) => {
-  return apiClient.get(`/pokemon-species/${pokemonNameOrId}`);
-};
 
 export default {
   getPokemon,
-  getPokemonList,
-  getPokemonSpecies,
+  getPokemonList
 };

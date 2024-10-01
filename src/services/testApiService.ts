@@ -1,8 +1,8 @@
 const ApiService = require('./ApiService');
 
-async function testGetPokemon() {
+async function testGetPokemon(nameOrId: string | number) {
     try {
-        const response = await ApiService.getPokemon('pikachu')
+        const response = await ApiService.getPokemon()
         console.log(`Dados:`, response.data);
     }catch (error){
         console.error('Erro ao buscar os dados do Pokémon', error);
@@ -28,7 +28,7 @@ async function testGetPokemonSpecies() {
 }
 
 async function runTests() {
-    await testGetPokemon();
+    await testGetPokemon('infernape');
     await testGetPokemonList();
     await testGetPokemonSpecies();
 }
