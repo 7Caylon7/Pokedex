@@ -10,15 +10,15 @@
                 <div class="search">
                     <input type="text" placeholder="Name or Number" v-model="pokemonInput" @keyup.enter="fetchPokemon(pokemonInput.toLowerCase())">
                     <div class="evolucao">
-                        <h3 class="elements">Evoluções</h3>
+                        
                     </div>
                 </div>
                 <div class="area-pokemon">
-                    <div class="pokemon" v-if="pokemonInput">
+                    <div class="pokemon" v-if="pokemon">
                         <img class="pokemon-img"
                             :src="pokemon.sprites.other.dream_world.front_default"
                             alt="Pokémon image" />
-                            <p><strong>{{ pokemon.id }} - {{ pokemon.name }}</strong></p>
+                            <p><strong>{{ pokemon.id }} - {{ capitalizedPokemonName }}</strong></p>
                     </div>
                     <div v-else>
                         <p>Carregando Pokémon...</p>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="stats">
                     <ul>
-                        <li><button class="btn-tp" v-for="type in getPokemonType()" :key="type">{{ type }}</button></li>
+                        <li><button class="btn-tp" v-for="type in getPokemonType()" :key="type" :style="{backgroundColor: typeColors[type]} || '#ccc'">{{ type }}</button></li>
                         <li class="elements">HP: {{ getPokemonStats().Hp }}</li>
                         <li class="elements">Attack: {{ getPokemonStats().Attack }}</li>
                         <li class="elements">Defense: {{ getPokemonStats().Defense }}</li>
@@ -41,8 +41,8 @@
             <img src="../assets/pokedex_aberta.png" alt="Pokedex" style="height: 70vh; width: 80vw;">
 
             <div class="buttons">
-                <button class="button"><</button>
-                <button class="button">></button>
+                <button @click="PrevPokemon" class="button"><</button>
+                <button @click="NextPokemon" class="button">></button>
             </div>
         </div>
 
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import {ref, onMounted, defineComponent } from 'vue'
+import {ref, computed, onMounted, defineComponent } from 'vue'
 import  ApiService  from '../services/ApiService';
 
 // Interface para os stats do Pokémon
@@ -69,22 +69,45 @@ interface PokemonType {
 
 // Interface para o objeto Pokémon
 interface Pokemon {
-    name: string;
+    id: string | null;
+    name: string | null;
     stats: PokemonStat[];
     types: PokemonType[];
 }
 
 export default defineComponent({
     setup() {
-        // Definir o tipo do 'pokemon' como 'Pokemon | null' para evitar erro 'never'
         const pokemon = ref<Pokemon | null>(null);
         const pokemonInput = ref(null);
+        const currentPokemonId = ref<number>(1);
+
+        //Mapeamento de cores:
+        const typeColors = {
+            grass: '#78C850',
+            fire: '#F08030',
+            water: '#6890F0',
+            bug: '#A8B820',
+            normal: '#A8A878',
+            electric: '#F8D030',
+            ice: '#98D8D8',
+            rock: '#B8A038',
+            ghost: '#705898',
+            dragon: '#7038F8',
+            fighting: '#C03028',
+            psychic: '#F85888',
+            fairy: '#EE99AC',
+            poison: '#A040B0',
+            ground: '#E0C068',
+            steel: '#B8B8D0',
+            flying: '#A98FF3',
+        };
 
         // Função para buscar os dados do Pokémon
         const fetchPokemon = async (nameOrId: string | number) => {
             try {
                 const response = await ApiService.getPokemon(nameOrId);
                 pokemon.value = response.data;
+                currentPokemonId.value = response.data.id;
             } catch (error) {
                 console.error('Erro ao buscar Pokémon', error);
             }
@@ -97,7 +120,7 @@ export default defineComponent({
             return [];
         }
 
-        // Função para obter todas as estatísticas do Pokémon
+        // Função para obter todas as estats do Pokémon
         const getPokemonStats = () => {
             if (pokemon.value) {
                 const hpStats = pokemon.value.stats.find(
@@ -140,16 +163,39 @@ export default defineComponent({
             };
         };
 
+        const NextPokemon = async () => {
+            const nextId = currentPokemonId.value + 1;
+            await fetchPokemon(nextId);
+        };
+
+        const PrevPokemon = async () => {
+            if(currentPokemonId.value > 1){
+            const prevId = currentPokemonId.value - 1;
+            await fetchPokemon(prevId);
+            }
+        };
+
+        const capitalizedPokemonName = computed(() => {
+            if (pokemon.value && pokemon.value.name) {
+                return pokemon.value.name.charAt(0).toUpperCase() + pokemon.value.name.slice(1);
+            }
+            return '';
+        });
+
         onMounted(() => {
-            fetchPokemon('bulbasaur');
+            fetchPokemon(currentPokemonId.value);
         });
 
         return {
             pokemon,
             pokemonInput,
+            typeColors,
             fetchPokemon,
+            NextPokemon,
+            PrevPokemon,
             getPokemonStats,
-            getPokemonType
+            getPokemonType,
+            capitalizedPokemonName
         };
     },
 });
@@ -180,7 +226,8 @@ export default defineComponent({
     height: 20vh;
 }
 
-.button {
+.button,
+.btn-tp {
     margin: 3px;
     width: 3vw;
     height: 5vh;
@@ -189,6 +236,11 @@ export default defineComponent({
     color: #fff;
     background-color: #444;
     box-shadow: -2px 3px 0 #222, -4px 6px 0 #000;
+}
+
+.btn-tp{
+    box-shadow: none;
+    width: 4vw;
 }
 
 .button:active{
@@ -209,7 +261,6 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
     gap: 7rem;
-    margin: 0 .5vw;
 }
 
 .area-pokemon{
@@ -238,6 +289,7 @@ export default defineComponent({
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
+    text-align: center
 }
 
 .elements{
