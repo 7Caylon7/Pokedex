@@ -9,8 +9,8 @@
             <div class="fundo">
                 <div class="search">
                     <input type="text" placeholder="Name or Number" v-model="pokemonInput" @keyup.enter="fetchPokemon(pokemonInput.toLowerCase())">
-                    <div class="evolucao">
-                        
+                    <div class="evolucao" v-if="condition">
+                        <h3 class="elements" >Evolução</h3>
                     </div>
                 </div>
                 <div class="area-pokemon">
@@ -19,6 +19,7 @@
                             :src="pokemon.sprites.other.dream_world.front_default"
                             alt="Pokémon image" />
                             <p><strong>{{ pokemon.id }} - {{ capitalizedPokemonName }}</strong></p>
+                            <button class="btn-tp" v-for="type in getPokemonType()" :key="type" :style="{backgroundColor: typeColors[type]} || '#ccc'">{{ type }}</button>
                     </div>
                     <div v-else>
                         <p>Carregando Pokémon...</p>
@@ -26,7 +27,6 @@
                 </div>
                 <div class="stats">
                     <ul>
-                        <li><button class="btn-tp" v-for="type in getPokemonType()" :key="type" :style="{backgroundColor: typeColors[type]} || '#ccc'">{{ type }}</button></li>
                         <li class="elements">HP: {{ getPokemonStats().Hp }}</li>
                         <li class="elements">Attack: {{ getPokemonStats().Attack }}</li>
                         <li class="elements">Defense: {{ getPokemonStats().Defense }}</li>
@@ -38,8 +38,7 @@
                     </ul>
                 </div>
             </div>
-            <img src="../assets/pokedex_aberta.png" alt="Pokedex" style="height: 70vh; width: 80vw;">
-
+            <img class="sinnoh-pokedex" src="../assets/pokedex_aberta.png" alt="Pokedex" style="">
             <div class="buttons">
                 <button @click="PrevPokemon" class="button"><</button>
                 <button @click="NextPokemon" class="button">></button>
@@ -204,19 +203,24 @@ export default defineComponent({
 
 <style scoped>
 .pokedex {
-  position: absolute;
-  top: 10vh;
-  right: 12vw;
+  position: relative;
+  top: -90vh;
+  right: -7vw;
 }
 
-.fundo{
-    position: absolute;
-    top: 8.6vh;
-    left: 25.7vw;
-    width: 42.6vw;
-    height: 53vh;
-    background-color: azure;
-    border-radius: 8px;
+.sinnoh-pokedex {
+  height: 70vh;
+  width: 80vw;
+}
+
+.fundo {
+  position: absolute;
+  top: 8.6vh;
+  left: 25.7vw;
+  width: 42.6vw;
+  height: 53vh;
+  background-color: azure;
+  border-radius: 8px;
 }
 
 .buttons{
@@ -247,26 +251,24 @@ export default defineComponent({
     background-color: #8c2020;
 }
 
+
+/* elementos do grid */
 .pokedex input{
     width: 40%;
     height: 5vh;
-    margin-left: 2vw;
-    margin-bottom: 1vh;
+    margin: 1vw 0 1vh 1vh;
     border: solid 2px #444;
     border-radius: 5px;
     box-shadow: -1px 2px 0 #d6d6d6, -2px 4px 0 #000;
 }
 
-.search{
-    display: flex;
-    flex-direction: row;
-    gap: 7rem;
-}
 
 .area-pokemon{
     display: flex;
     flex-direction: column;
     margin-left: 5vw;
+    margin-top: 1vh;
+    flex-wrap: wrap;
 }
 
 .pokemon-img {
@@ -289,17 +291,21 @@ export default defineComponent({
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
-    text-align: center
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .elements{
-    border: 1px solid #000;
+    border: 2px solid #000;
     border-radius: 20px;
     padding: 1vh;
     background-color: #444;
     color: #d6d6d6;
+    width: 9vw;
 }
 
+
+/* background */
 .ash{
     position: absolute;
     left: 87vw;
@@ -324,5 +330,67 @@ export default defineComponent({
   100% {
     background-position: 100vw 0;
   }
+}
+
+/* responsividade */
+@media screen and (min-width: 300px) and (max-width: 840px){
+    .ash,
+    .buttons{
+        display: none;
+    }
+
+    .background{
+        animation: none;
+    }
+
+
+    .pokedex {
+        top: -100vh;
+        left: 0;
+        height: 100vh;
+    }
+
+    .fundo {
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pokedex input{
+        width: 98%;
+        margin-left: 1vw;
+        text-align: center;
+        height: 8vh;
+    }
+
+    .area-pokemon{
+        align-items: center;
+    }
+
+    .search{
+        gap: 0;
+    }
+
+    .stats{
+        left: 0;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .elements{
+        width: 40vw;
+    }
+
+    .stats ul {
+        flex-direction: column;
+        width: 50vw;
+    }
+
+    .btn-tp {
+        width: 20vw;
+    }
 }
 </style>
