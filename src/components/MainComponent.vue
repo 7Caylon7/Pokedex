@@ -40,7 +40,7 @@
             </div>
             <img class="sinnoh-pokedex" src="../assets/pokedex_aberta.png" alt="Pokedex" style="">
             <div class="buttons">
-                <button @click="PrevPokemon" class="button"><</button>
+                <button @click="PrevPokemon" class="button" ><</button>
                 <button @click="NextPokemon" class="button">></button>
             </div>
         </div>
@@ -204,29 +204,32 @@ export default defineComponent({
 <style scoped>
 .pokedex {
   position: relative;
-  top: -90vh;
-  right: -7vw;
+  top: -100vh;
+  right: -1vw;
 }
 
 .sinnoh-pokedex {
-  height: 70vh;
-  width: 80vw;
+  height: 90vh;
+  width: 90vw;
 }
 
 .fundo {
   position: absolute;
-  top: 8.6vh;
-  left: 25.7vw;
-  width: 42.6vw;
-  height: 53vh;
+  top: 11vh;
+  left: 28.8vw;
+  width: 48.1vw;
+  height: 68.5vh;
   background-color: azure;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .buttons{
     position: absolute;
-    top: 32vh;
-    left: 11vw;
+    top: 41vh;
+    left: 13vw;
     height: 20vh;
 }
 
@@ -245,6 +248,7 @@ export default defineComponent({
 .btn-tp{
     box-shadow: none;
     width: 4vw;
+    margin-bottom: 0;
 }
 
 .button:active{
@@ -254,7 +258,6 @@ export default defineComponent({
 
 /* elementos do grid */
 .pokedex input{
-    width: 40%;
     height: 5vh;
     margin: 1vw 0 1vh 1vh;
     border: solid 2px #444;
@@ -262,13 +265,13 @@ export default defineComponent({
     box-shadow: -1px 2px 0 #d6d6d6, -2px 4px 0 #000;
 }
 
-
 .area-pokemon{
     display: flex;
     flex-direction: column;
-    margin-left: 5vw;
+    align-items: center;
     margin-top: 1vh;
     flex-wrap: wrap;
+    text-align: center;
 }
 
 .pokemon-img {
@@ -283,7 +286,6 @@ export default defineComponent({
 
 .stats{
     position: absolute;
-    left: 1rem;
     bottom: 0;
 }
 
@@ -301,7 +303,7 @@ export default defineComponent({
     padding: 1vh;
     background-color: #444;
     color: #d6d6d6;
-    width: 9vw;
+    width: 12vw;
 }
 
 
@@ -358,6 +360,12 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
     }
+
+    .button {
+        margin: 3px;
+        width: 15vw;
+    }
+
 
     .pokedex input{
         width: 98%;
